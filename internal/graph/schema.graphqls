@@ -1,0 +1,32 @@
+type Rider{
+    id: String!
+    name: String!
+    status: String!
+    location: Location
+}
+
+type Location {
+    latitude: Float!
+    longitude: Float!
+}
+
+input RiderInput {
+    name: String!
+    status: String!
+}
+
+input LocationInput {
+    latitude: Float!
+    longitude: Float!
+}
+
+type Query {
+    riders: [Rider]!
+    rider(id: String!): Rider
+}
+
+type Mutation {
+    createRider(input: RiderInput!): Rider
+    updateRider(id: String!, input: RiderInput): Rider
+    updateLocation(id: String!, input: LocationInput): Rider
+}

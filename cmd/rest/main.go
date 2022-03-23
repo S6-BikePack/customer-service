@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"log"
+	"os"
 	"rider-service/docs"
 	"rider-service/internal/core/services/ridersrv"
 	"rider-service/internal/handlers/riderhdl"
@@ -13,6 +14,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "rider-service/docs"
 )
+
+const defaultPort = ":1234"
 
 func main() {
 	setupSwagger()
@@ -36,7 +39,12 @@ func main() {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	log.Fatal(router.Run(":1234"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	log.Fatal(router.Run(port))
 }
 
 func setupSwagger() {

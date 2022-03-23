@@ -42,7 +42,7 @@ func (repository *cockroachdb) Get(id string) (domain.Rider, error) {
 
 	repository.Connection.Preload(clause.Associations).First(&riderDao, uid)
 
-	return riderDao.ToDomain(), nil
+	return riderDao.ToDomain()
 }
 
 func (repository *cockroachdb) GetAll() ([]domain.Rider, error) {
@@ -52,7 +52,13 @@ func (repository *cockroachdb) GetAll() ([]domain.Rider, error) {
 	var riders []domain.Rider
 
 	for _, v := range ridersDao {
-		riders = append(riders, v.ToDomain())
+		domainModel, err := v.ToDomain()
+
+		if err != nil {
+			return nil, err
+		}
+
+		riders = append(riders, domainModel)
 	}
 
 	return riders, nil
@@ -64,7 +70,11 @@ func (repository *cockroachdb) Save(rider domain.Rider) (domain.Rider, error) {
 
 	result := repository.Connection.Create(&riderDao)
 
-	return riderDao.ToDomain(), result.Error
+	if result.Error != nil {
+		return domain.Rider{}, result.Error
+	}
+
+	return riderDao.ToDomain()
 }
 
 func (repository *cockroachdb) Update(rider domain.Rider) (domain.Rider, error) {
@@ -73,5 +83,9 @@ func (repository *cockroachdb) Update(rider domain.Rider) (domain.Rider, error) 
 
 	result := repository.Connection.Model(&riderDao).Updates(riderDao)
 
-	return riderDao.ToDomain(), result.Error
+	if result.Error != nil {
+		return domain.Rider{}, result.Error
+	}
+
+	return riderDao.ToDomain()
 }

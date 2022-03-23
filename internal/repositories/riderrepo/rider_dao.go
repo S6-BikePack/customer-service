@@ -17,11 +17,17 @@ func (RiderDao) TableName() string {
 	return "rider"
 }
 
-func (dao RiderDao) ToDomain() domain.Rider {
-	rider := domain.NewRider(dao.Name, dao.Status, domain.NewLocation(dao.Latitude, dao.Longitude))
+func (dao RiderDao) ToDomain() (domain.Rider, error) {
+	location, err := domain.NewLocation(dao.Latitude, dao.Longitude)
+
+	if err != nil {
+		return domain.Rider{}, err
+	}
+
+	rider := domain.NewRider(dao.Name, dao.Status, location)
 	rider.ID = dao.Model.ID
 
-	return rider
+	return rider, nil
 }
 
 func (dao *RiderDao) FromDomain(rider domain.Rider) {
