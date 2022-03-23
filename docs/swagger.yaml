@@ -1,0 +1,163 @@
+definitions:
+  domain.Location:
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
+  domain.Rider:
+    properties:
+      id:
+        type: integer
+      location:
+        $ref: '#/definitions/domain.Location'
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  riderhdl.BodyCreate:
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  riderhdl.BodyUpdate:
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  riderhdl.ResponseCreate:
+    properties:
+      id:
+        type: integer
+      location:
+        $ref: '#/definitions/domain.Location'
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  riderhdl.ResponseUpdate:
+    properties:
+      id:
+        type: integer
+      location:
+        $ref: '#/definitions/domain.Location'
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /riders:
+    get:
+      consumes:
+      - application/json
+      description: gets all riders in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Rider'
+            type: array
+      summary: get all riders
+    post:
+      consumes:
+      - application/json
+      description: creates a new rider
+      parameters:
+      - description: Add rider
+        in: body
+        name: rider
+        required: true
+        schema:
+          $ref: '#/definitions/riderhdl.BodyCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/riderhdl.ResponseCreate'
+      summary: create rider
+  /riders/{id}:
+    get:
+      description: gets a rider from the system by its ID
+      parameters:
+      - description: Rider id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Rider'
+      summary: get rider
+    put:
+      consumes:
+      - application/json
+      description: updates a rider's information
+      parameters:
+      - description: Update rider
+        in: body
+        name: rider
+        required: true
+        schema:
+          $ref: '#/definitions/riderhdl.BodyUpdate'
+      - description: Rider id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/riderhdl.ResponseUpdate'
+      summary: update rider
+  /riders/{id}/location:
+    put:
+      consumes:
+      - application/json
+      description: updates a rider's location
+      parameters:
+      - description: Update rider
+        in: body
+        name: rider
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Location'
+      - description: Rider id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/riderhdl.ResponseUpdate'
+      summary: update rider location
+swagger: "2.0"
