@@ -21,7 +21,7 @@ input LocationInput {
 }
 
 type Query {
-    riders: [Rider]!
+    riders: [Rider]
     rider(id: String!): Rider
 }
 

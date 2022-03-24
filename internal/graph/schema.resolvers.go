@@ -11,39 +11,26 @@ import (
 	"strconv"
 )
 
-func (r *mutationResolver) CreateRider(ctx context.Context, input model.RiderInput) (*model.Rider, error) {
+func (r *mutationResolver) CreateRider(ctx context.Context, input model.RiderInput) (*domain.Rider, error) {
 	rider, err := r.RiderService.Create(input.Name, input.Status)
 
 	if err != nil {
 		return nil, err
 	}
 
-	riderModel := model.Rider{
-		ID:     strconv.Itoa(int(rider.ID)),
-		Name:   rider.Name,
-		Status: rider.Status,
-	}
-
-	return &riderModel, err
+	return &rider, err
 }
 
-func (r *mutationResolver) UpdateRider(ctx context.Context, id string, input *model.RiderInput) (*model.Rider, error) {
+func (r *mutationResolver) UpdateRider(ctx context.Context, id string, input *model.RiderInput) (*domain.Rider, error) {
 	rider, err := r.RiderService.Update(id, input.Name, input.Status)
 
 	if err != nil {
 		return nil, err
 	}
-
-	riderModel := model.Rider{
-		ID:     strconv.Itoa(int(rider.ID)),
-		Name:   rider.Name,
-		Status: rider.Status,
-	}
-
-	return &riderModel, err
+	return &rider, err
 }
 
-func (r *mutationResolver) UpdateLocation(ctx context.Context, id string, input *model.LocationInput) (*model.Rider, error) {
+func (r *mutationResolver) UpdateLocation(ctx context.Context, id string, input *model.LocationInput) (*domain.Rider, error) {
 	location, err := domain.NewLocation(input.Latitude, input.Longitude)
 
 	if err != nil {
@@ -56,52 +43,37 @@ func (r *mutationResolver) UpdateLocation(ctx context.Context, id string, input 
 		return nil, err
 	}
 
-	riderModel := model.Rider{
-		ID:       strconv.Itoa(int(rider.ID)),
-		Name:     rider.Name,
-		Status:   rider.Status,
-		Location: &model.Location{Latitude: rider.Location.Latitude, Longitude: rider.Location.Longitude},
-	}
-
-	return &riderModel, err
+	return &rider, err
 }
 
-func (r *queryResolver) Riders(ctx context.Context) ([]*model.Rider, error) {
+func (r *queryResolver) Riders(ctx context.Context) ([]*domain.Rider, error) {
 	riders, err := r.RiderService.GetAll()
 
 	if err != nil {
 		return nil, err
 	}
 
-	var riderModels []*model.Rider
+	var riderModels []*domain.Rider
 
-	for _, v := range riders {
-		riderModels = append(riderModels, &model.Rider{
-			ID:       strconv.Itoa(int(v.ID)),
-			Name:     v.Name,
-			Status:   v.Status,
-			Location: &model.Location{Latitude: v.Location.Latitude, Longitude: v.Location.Longitude},
-		})
+	for i := range riders {
+		riderModels = append(riderModels, &riders[i])
 	}
 
 	return riderModels, nil
 }
 
-func (r *queryResolver) Rider(ctx context.Context, id string) (*model.Rider, error) {
+func (r *queryResolver) Rider(ctx context.Context, id string) (*domain.Rider, error) {
 	rider, err := r.RiderService.Get(id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	riderModel := model.Rider{
-		ID:       strconv.Itoa(int(rider.ID)),
-		Name:     rider.Name,
-		Status:   rider.Status,
-		Location: &model.Location{Latitude: rider.Location.Latitude, Longitude: rider.Location.Longitude},
-	}
+	return &rider, err
+}
 
-	return &riderModel, err
+func (r *riderResolver) ID(ctx context.Context, obj *domain.Rider) (string, error) {
+	return strconv.Itoa(int(obj.ID)), nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -110,5 +82,9 @@ func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResol
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+// Rider returns generated.RiderResolver implementation.
+func (r *Resolver) Rider() generated.RiderResolver { return &riderResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type riderResolver struct{ *Resolver }

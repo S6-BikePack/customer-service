@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"rider-service/internal/core/domain"
 	"rider-service/internal/graph/model"
 	"strconv"
 	"sync"
@@ -37,6 +38,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	Rider() RiderResolver
 }
 
 type DirectiveRoot struct {
@@ -68,13 +70,16 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateRider(ctx context.Context, input model.RiderInput) (*model.Rider, error)
-	UpdateRider(ctx context.Context, id string, input *model.RiderInput) (*model.Rider, error)
-	UpdateLocation(ctx context.Context, id string, input *model.LocationInput) (*model.Rider, error)
+	CreateRider(ctx context.Context, input model.RiderInput) (*domain.Rider, error)
+	UpdateRider(ctx context.Context, id string, input *model.RiderInput) (*domain.Rider, error)
+	UpdateLocation(ctx context.Context, id string, input *model.LocationInput) (*domain.Rider, error)
 }
 type QueryResolver interface {
-	Riders(ctx context.Context) ([]*model.Rider, error)
-	Rider(ctx context.Context, id string) (*model.Rider, error)
+	Riders(ctx context.Context) ([]*domain.Rider, error)
+	Rider(ctx context.Context, id string) (*domain.Rider, error)
+}
+type RiderResolver interface {
+	ID(ctx context.Context, obj *domain.Rider) (string, error)
 }
 
 type executableSchema struct {
@@ -276,7 +281,7 @@ input LocationInput {
 }
 
 type Query {
-    riders: [Rider]!
+    riders: [Rider]
     rider(id: String!): Rider
 }
 
@@ -423,7 +428,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Location_latitude(ctx context.Context, field graphql.CollectedField, obj *model.Location) (ret graphql.Marshaler) {
+func (ec *executionContext) _Location_latitude(ctx context.Context, field graphql.CollectedField, obj *domain.Location) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -458,7 +463,7 @@ func (ec *executionContext) _Location_latitude(ctx context.Context, field graphq
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Location_longitude(ctx context.Context, field graphql.CollectedField, obj *model.Location) (ret graphql.Marshaler) {
+func (ec *executionContext) _Location_longitude(ctx context.Context, field graphql.CollectedField, obj *domain.Location) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -527,9 +532,9 @@ func (ec *executionContext) _Mutation_createRider(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Rider)
+	res := resTmp.(*domain.Rider)
 	fc.Result = res
-	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx, field.Selections, res)
+	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateRider(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -566,9 +571,9 @@ func (ec *executionContext) _Mutation_updateRider(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Rider)
+	res := resTmp.(*domain.Rider)
 	fc.Result = res
-	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx, field.Selections, res)
+	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateLocation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -605,9 +610,9 @@ func (ec *executionContext) _Mutation_updateLocation(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Rider)
+	res := resTmp.(*domain.Rider)
 	fc.Result = res
-	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx, field.Selections, res)
+	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_riders(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -635,14 +640,11 @@ func (ec *executionContext) _Query_riders(ctx context.Context, field graphql.Col
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Rider)
+	res := resTmp.([]*domain.Rider)
 	fc.Result = res
-	return ec.marshalNRider2ᚕᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx, field.Selections, res)
+	return ec.marshalORider2ᚕᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_rider(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -679,9 +681,9 @@ func (ec *executionContext) _Query_rider(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Rider)
+	res := resTmp.(*domain.Rider)
 	fc.Result = res
-	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx, field.Selections, res)
+	return ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -755,7 +757,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Rider_id(ctx context.Context, field graphql.CollectedField, obj *model.Rider) (ret graphql.Marshaler) {
+func (ec *executionContext) _Rider_id(ctx context.Context, field graphql.CollectedField, obj *domain.Rider) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -766,14 +768,14 @@ func (ec *executionContext) _Rider_id(ctx context.Context, field graphql.Collect
 		Object:     "Rider",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
+		return ec.resolvers.Rider().ID(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -790,7 +792,7 @@ func (ec *executionContext) _Rider_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Rider_name(ctx context.Context, field graphql.CollectedField, obj *model.Rider) (ret graphql.Marshaler) {
+func (ec *executionContext) _Rider_name(ctx context.Context, field graphql.CollectedField, obj *domain.Rider) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -825,7 +827,7 @@ func (ec *executionContext) _Rider_name(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Rider_status(ctx context.Context, field graphql.CollectedField, obj *model.Rider) (ret graphql.Marshaler) {
+func (ec *executionContext) _Rider_status(ctx context.Context, field graphql.CollectedField, obj *domain.Rider) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -860,7 +862,7 @@ func (ec *executionContext) _Rider_status(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Rider_location(ctx context.Context, field graphql.CollectedField, obj *model.Rider) (ret graphql.Marshaler) {
+func (ec *executionContext) _Rider_location(ctx context.Context, field graphql.CollectedField, obj *domain.Rider) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -887,9 +889,9 @@ func (ec *executionContext) _Rider_location(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Location)
+	res := resTmp.(domain.Location)
 	fc.Result = res
-	return ec.marshalOLocation2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalOLocation2riderᚑserviceᚋinternalᚋcoreᚋdomainᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -2150,7 +2152,7 @@ func (ec *executionContext) unmarshalInputRiderInput(ctx context.Context, obj in
 
 var locationImplementors = []string{"Location"}
 
-func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *model.Location) graphql.Marshaler {
+func (ec *executionContext) _Location(ctx context.Context, sel ast.SelectionSet, obj *domain.Location) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, locationImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -2269,9 +2271,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_riders(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -2329,7 +2328,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 var riderImplementors = []string{"Rider"}
 
-func (ec *executionContext) _Rider(ctx context.Context, sel ast.SelectionSet, obj *model.Rider) graphql.Marshaler {
+func (ec *executionContext) _Rider(ctx context.Context, sel ast.SelectionSet, obj *domain.Rider) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, riderImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -2338,15 +2337,25 @@ func (ec *executionContext) _Rider(ctx context.Context, sel ast.SelectionSet, ob
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Rider")
 		case "id":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Rider_id(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Rider_id(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			})
 		case "name":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Rider_name(ctx, field, obj)
@@ -2355,7 +2364,7 @@ func (ec *executionContext) _Rider(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "status":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -2365,7 +2374,7 @@ func (ec *executionContext) _Rider(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = innerFunc(ctx)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "location":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -2838,44 +2847,6 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) marshalNRider2ᚕᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx context.Context, sel ast.SelectionSet, v []*model.Rider) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalNRiderInput2riderᚑserviceᚋinternalᚋgraphᚋmodelᚐRiderInput(ctx context.Context, v interface{}) (model.RiderInput, error) {
 	res, err := ec.unmarshalInputRiderInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3175,11 +3146,8 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOLocation2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐLocation(ctx context.Context, sel ast.SelectionSet, v *model.Location) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Location(ctx, sel, v)
+func (ec *executionContext) marshalOLocation2riderᚑserviceᚋinternalᚋcoreᚋdomainᚐLocation(ctx context.Context, sel ast.SelectionSet, v domain.Location) graphql.Marshaler {
+	return ec._Location(ctx, sel, &v)
 }
 
 func (ec *executionContext) unmarshalOLocationInput2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐLocationInput(ctx context.Context, v interface{}) (*model.LocationInput, error) {
@@ -3190,7 +3158,48 @@ func (ec *executionContext) unmarshalOLocationInput2ᚖriderᚑserviceᚋinterna
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalORider2ᚖriderᚑserviceᚋinternalᚋgraphᚋmodelᚐRider(ctx context.Context, sel ast.SelectionSet, v *model.Rider) graphql.Marshaler {
+func (ec *executionContext) marshalORider2ᚕᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx context.Context, sel ast.SelectionSet, v []*domain.Rider) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalORider2ᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalORider2ᚖriderᚑserviceᚋinternalᚋcoreᚋdomainᚐRider(ctx context.Context, sel ast.SelectionSet, v *domain.Rider) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
