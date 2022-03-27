@@ -8,11 +8,12 @@ import (
 	"rider-service/internal/core/domain"
 	"rider-service/internal/graph/generated"
 	"rider-service/internal/graph/model"
-	"strconv"
+
+	"github.com/google/uuid"
 )
 
 func (r *mutationResolver) CreateRider(ctx context.Context, input model.RiderInput) (*domain.Rider, error) {
-	rider, err := r.RiderService.Create(input.Name, input.Status)
+	rider, err := r.RiderService.Create(input.Name, int8(input.Status))
 
 	if err != nil {
 		return nil, err
@@ -22,7 +23,13 @@ func (r *mutationResolver) CreateRider(ctx context.Context, input model.RiderInp
 }
 
 func (r *mutationResolver) UpdateRider(ctx context.Context, id string, input *model.RiderInput) (*domain.Rider, error) {
-	rider, err := r.RiderService.Update(id, input.Name, input.Status)
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rider, err := r.RiderService.Update(uid, input.Name, int8(input.Status))
 
 	if err != nil {
 		return nil, err
@@ -37,7 +44,13 @@ func (r *mutationResolver) UpdateLocation(ctx context.Context, id string, input 
 		return nil, err
 	}
 
-	rider, err := r.RiderService.UpdateLocation(id, location)
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rider, err := r.RiderService.UpdateLocation(uid, location)
 
 	if err != nil {
 		return nil, err
@@ -63,7 +76,13 @@ func (r *queryResolver) Riders(ctx context.Context) ([]*domain.Rider, error) {
 }
 
 func (r *queryResolver) Rider(ctx context.Context, id string) (*domain.Rider, error) {
-	rider, err := r.RiderService.Get(id)
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	rider, err := r.RiderService.Get(uid)
 
 	if err != nil {
 		return nil, err
@@ -73,7 +92,11 @@ func (r *queryResolver) Rider(ctx context.Context, id string) (*domain.Rider, er
 }
 
 func (r *riderResolver) ID(ctx context.Context, obj *domain.Rider) (string, error) {
-	return strconv.Itoa(int(obj.ID)), nil
+	return obj.ID.String(), nil
+}
+
+func (r *riderResolver) Status(ctx context.Context, obj *domain.Rider) (int, error) {
+	return int(obj.Status), nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

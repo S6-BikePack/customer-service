@@ -80,6 +80,8 @@ type QueryResolver interface {
 }
 type RiderResolver interface {
 	ID(ctx context.Context, obj *domain.Rider) (string, error)
+
+	Status(ctx context.Context, obj *domain.Rider) (int, error)
 }
 
 type executableSchema struct {
@@ -261,7 +263,7 @@ var sources = []*ast.Source{
 	{Name: "internal/graph/schema.graphqls", Input: `type Rider{
     id: String!
     name: String!
-    status: String!
+    status: Int!
     location: Location
 }
 
@@ -272,7 +274,7 @@ type Location {
 
 input RiderInput {
     name: String!
-    status: String!
+    status: Int!
 }
 
 input LocationInput {
@@ -838,14 +840,14 @@ func (ec *executionContext) _Rider_status(ctx context.Context, field graphql.Col
 		Object:     "Rider",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
+		return ec.resolvers.Rider().Status(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -857,9 +859,9 @@ func (ec *executionContext) _Rider_status(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Rider_location(ctx context.Context, field graphql.CollectedField, obj *domain.Rider) (ret graphql.Marshaler) {
@@ -2132,7 +2134,7 @@ func (ec *executionContext) unmarshalInputRiderInput(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			it.Status, err = ec.unmarshalNString2string(ctx, v)
+			it.Status, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2367,15 +2369,25 @@ func (ec *executionContext) _Rider(ctx context.Context, sel ast.SelectionSet, ob
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "status":
+			field := field
+
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Rider_status(ctx, field, obj)
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Rider_status(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
 
-			out.Values[i] = innerFunc(ctx)
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
+			})
 		case "location":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Rider_location(ctx, field, obj)
@@ -2845,6 +2857,21 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 		}
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNRiderInput2riderᚑserviceᚋinternalᚋgraphᚋmodelᚐRiderInput(ctx context.Context, v interface{}) (model.RiderInput, error) {

@@ -1,11 +1,11 @@
 package riderrepo
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"rider-service/internal/core/domain"
-	"strconv"
 )
 
 type cockroachdb struct {
@@ -19,7 +19,7 @@ func NewCockroachDB(connStr string) (*cockroachdb, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&RiderDao{})
+	err = db.AutoMigrate(&domain.Rider{})
 
 	if err != nil {
 		return nil, err
@@ -32,60 +32,38 @@ func NewCockroachDB(connStr string) (*cockroachdb, error) {
 	return &database, nil
 }
 
-func (repository *cockroachdb) Get(id string) (domain.Rider, error) {
-	var riderDao RiderDao
-	uid, err := strconv.ParseUint(id, 10, 64)
+func (repository *cockroachdb) Get(uid uuid.UUID) (domain.Rider, error) {
+	var rider domain.Rider
 
-	if err != nil {
-		return domain.Rider{}, nil
-	}
+	repository.Connection.Preload(clause.Associations).First(&rider, uid)
 
-	repository.Connection.Preload(clause.Associations).First(&riderDao, uid)
-
-	return riderDao.ToDomain()
+	return rider, nil
 }
 
 func (repository *cockroachdb) GetAll() ([]domain.Rider, error) {
-	var ridersDao []RiderDao
-	repository.Connection.Find(&ridersDao)
-
 	var riders []domain.Rider
 
-	for _, v := range ridersDao {
-		domainModel, err := v.ToDomain()
-
-		if err != nil {
-			return nil, err
-		}
-
-		riders = append(riders, domainModel)
-	}
+	repository.Connection.Find(&riders)
 
 	return riders, nil
 }
 
 func (repository *cockroachdb) Save(rider domain.Rider) (domain.Rider, error) {
-	var riderDao RiderDao
-	riderDao.FromDomain(rider)
-
-	result := repository.Connection.Create(&riderDao)
+	result := repository.Connection.Create(&rider)
 
 	if result.Error != nil {
 		return domain.Rider{}, result.Error
 	}
 
-	return riderDao.ToDomain()
+	return rider, nil
 }
 
 func (repository *cockroachdb) Update(rider domain.Rider) (domain.Rider, error) {
-	var riderDao RiderDao
-	riderDao.FromDomain(rider)
-
-	result := repository.Connection.Model(&riderDao).Updates(riderDao)
+	result := repository.Connection.Model(&rider).Updates(rider)
 
 	if result.Error != nil {
 		return domain.Rider{}, result.Error
 	}
 
-	return riderDao.ToDomain()
+	return rider, nil
 }

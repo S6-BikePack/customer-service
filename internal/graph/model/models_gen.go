@@ -9,5 +9,5 @@ type LocationInput struct {
 
 type RiderInput struct {
 	Name   string `json:"name"`
-	Status string `json:"status"`
+	Status int    `json:"status"`
 }

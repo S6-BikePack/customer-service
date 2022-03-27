@@ -1,7 +1,7 @@
 type Rider{
     id: String!
     name: String!
-    status: String!
+    status: Int!
     location: Location
 }
 
@@ -12,7 +12,7 @@ type Location {
 
 input RiderInput {
     name: String!
-    status: String!
+    status: Int!
 }
 
 input LocationInput {

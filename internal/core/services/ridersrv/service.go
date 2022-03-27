@@ -2,6 +2,7 @@ package ridersrv
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"rider-service/internal/core/domain"
 	"rider-service/internal/core/ports"
 )
@@ -20,11 +21,11 @@ func (srv *service) GetAll() ([]domain.Rider, error) {
 	return srv.riderRepository.GetAll()
 }
 
-func (srv *service) Get(id string) (domain.Rider, error) {
-	return srv.riderRepository.Get(id)
+func (srv *service) Get(uuid uuid.UUID) (domain.Rider, error) {
+	return srv.riderRepository.Get(uuid)
 }
 
-func (srv *service) Create(name string, status string) (domain.Rider, error) {
+func (srv *service) Create(name string, status int8) (domain.Rider, error) {
 	rider := domain.NewRider(name, status, domain.Location{})
 
 	rider, err := srv.riderRepository.Save(rider)
@@ -36,16 +37,14 @@ func (srv *service) Create(name string, status string) (domain.Rider, error) {
 	return rider, nil
 }
 
-func (srv *service) Update(id string, name string, status string) (domain.Rider, error) {
-	rider, err := srv.Get(id)
+func (srv *service) Update(uuid uuid.UUID, name string, status int8) (domain.Rider, error) {
+	rider, err := srv.Get(uuid)
 
 	if err != nil {
 		return domain.Rider{}, errors.New("could not find rider with id")
 	}
 
-	if status != "" {
-		rider.Status = status
-	}
+	rider.Status = status
 
 	if name != "" {
 		rider.Name = name
@@ -60,8 +59,8 @@ func (srv *service) Update(id string, name string, status string) (domain.Rider,
 	return rider, nil
 }
 
-func (srv *service) UpdateLocation(id string, location domain.Location) (domain.Rider, error) {
-	rider, err := srv.Get(id)
+func (srv *service) UpdateLocation(uuid uuid.UUID, location domain.Location) (domain.Rider, error) {
+	rider, err := srv.Get(uuid)
 
 	if err != nil {
 		return domain.Rider{}, errors.New("could not find rider with id")
