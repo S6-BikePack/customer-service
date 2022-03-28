@@ -1,6 +1,7 @@
 package riderhdl
 
 import (
+	"github.com/google/uuid"
 	"rider-service/internal/core/domain"
 	"rider-service/internal/core/ports"
 )
@@ -44,7 +45,14 @@ func (hdl *HTTPHandler) GetAll(c *gin.Context) {
 // @Success      200  {object}  domain.Rider
 // @Router       /riders/{id} [get]
 func (hdl *HTTPHandler) Get(c *gin.Context) {
-	rider, err := hdl.riderService.Get(c.Param("id"))
+	uid, err := uuid.Parse(c.Param("id"))
+
+	if err != nil {
+		c.AbortWithStatus(400)
+		return
+	}
+
+	rider, err := hdl.riderService.Get(uid)
 
 	if err != nil {
 		c.AbortWithStatus(404)
@@ -99,7 +107,14 @@ func (hdl *HTTPHandler) UpdateRider(c *gin.Context) {
 		c.AbortWithStatus(500)
 	}
 
-	rider, err := hdl.riderService.Update(c.Param("id"), body.Name, body.Status)
+	uid, err := uuid.Parse(c.Param("id"))
+
+	if err != nil {
+		c.AbortWithStatus(400)
+		return
+	}
+
+	rider, err := hdl.riderService.Update(uid, body.Name, body.Status)
 
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})
@@ -127,7 +142,14 @@ func (hdl *HTTPHandler) UpdateLocation(c *gin.Context) {
 		c.AbortWithStatus(500)
 	}
 
-	rider, err := hdl.riderService.UpdateLocation(c.Param("id"), body)
+	uid, err := uuid.Parse(c.Param("id"))
+
+	if err != nil {
+		c.AbortWithStatus(400)
+		return
+	}
+
+	rider, err := hdl.riderService.UpdateLocation(uid, body)
 
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{"message": err.Error()})

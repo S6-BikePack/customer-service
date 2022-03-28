@@ -4,7 +4,7 @@ import "rider-service/internal/core/domain"
 
 type BodyUpdate struct {
 	Name   string
-	Status string
+	Status int8
 }
 
 type ResponseUpdate domain.Rider

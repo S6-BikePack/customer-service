@@ -6,13 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
+	"rider-service/internal/core/ports"
+	"rider-service/internal/core/services/rabbitmq_service"
 	"rider-service/internal/core/services/ridersrv"
 	"rider-service/internal/graph"
 	"rider-service/internal/graph/generated"
+	"rider-service/internal/handlers"
 	"rider-service/internal/repositories/riderrepo"
+	"rider-service/pkg/rabbitmq"
 )
 
-const defaultPort = ":1235"
+const defaultPort = ":1236"
+const defaultRmqConn = "amqp://user:password@localhost:5672/"
 
 func main() {
 	port := os.Getenv("PORT")
@@ -20,20 +25,38 @@ func main() {
 		port = defaultPort
 	}
 
-	router := gin.Default()
-	router.POST("/query", graphqlHandler())
-	router.GET("/", playgroundHandler())
-	log.Fatal(router.Run(port))
-}
+	rmqConn := os.Getenv("RABBITMQ")
+	if rmqConn == "" {
+		rmqConn = defaultRmqConn
+	}
 
-func graphqlHandler() gin.HandlerFunc {
-	riderRepository, err := riderrepo.NewCockroachDB("postgresql://root@localhost:26257/test?sslmode=disable")
+	rmqServer, err := rabbitmq.NewRabbitMQ(rmqConn)
 
 	if err != nil {
 		panic(err)
 	}
 
-	riderService := ridersrv.New(riderRepository)
+	riderRepository, err := riderrepo.NewCockroachDB("postgresql://root@localhost:26257/riders?sslmode=disable")
+
+	if err != nil {
+		panic(err)
+	}
+
+	rmqPublisher := rabbitmq_service.NewRabbitMQPublisher(rmqServer)
+
+	riderService := ridersrv.New(riderRepository, rmqPublisher)
+
+	rmqSubscriber := handlers.NewRabbitMQ(rmqServer, riderService)
+
+	router := gin.Default()
+	router.POST("/query", graphqlHandler(riderService))
+	router.GET("/", playgroundHandler())
+
+	go rmqSubscriber.Listen("delivery.#")
+	log.Fatal(router.Run(port))
+}
+
+func graphqlHandler(riderService ports.RiderService) gin.HandlerFunc {
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{RiderService: riderService}}))
 

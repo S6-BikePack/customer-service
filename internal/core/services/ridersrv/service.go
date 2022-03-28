@@ -8,12 +8,14 @@ import (
 )
 
 type service struct {
-	riderRepository ports.RiderRepository
+	riderRepository  ports.RiderRepository
+	messagePublisher ports.MessageBusPublisher
 }
 
-func New(riderRepository ports.RiderRepository) *service {
+func New(riderRepository ports.RiderRepository, messagePublisher ports.MessageBusPublisher) *service {
 	return &service{
-		riderRepository: riderRepository,
+		riderRepository:  riderRepository,
+		messagePublisher: messagePublisher,
 	}
 }
 
@@ -34,6 +36,7 @@ func (srv *service) Create(name string, status int8) (domain.Rider, error) {
 		return domain.Rider{}, errors.New("saving new rider failed")
 	}
 
+	srv.messagePublisher.CreateRider(rider)
 	return rider, nil
 }
 
@@ -56,6 +59,7 @@ func (srv *service) Update(uuid uuid.UUID, name string, status int8) (domain.Rid
 		return domain.Rider{}, errors.New("saving new rider failed")
 	}
 
+	srv.messagePublisher.UpdateRider(rider)
 	return rider, nil
 }
 
@@ -74,5 +78,6 @@ func (srv *service) UpdateLocation(uuid uuid.UUID, location domain.Location) (do
 		return domain.Rider{}, errors.New("saving new rider failed")
 	}
 
+	srv.messagePublisher.UpdateRider(rider)
 	return rider, nil
 }
