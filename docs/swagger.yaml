@@ -9,58 +9,54 @@ definitions:
   domain.Rider:
     properties:
       id:
-        type: integer
+        type: string
       location:
         $ref: '#/definitions/domain.Location'
       name:
         type: string
       status:
-        type: string
+        type: integer
     type: object
   riderhdl.BodyCreate:
     properties:
-      latitude:
-        type: number
-      longitude:
-        type: number
       name:
         type: string
       status:
-        type: string
+        type: integer
     type: object
   riderhdl.BodyUpdate:
     properties:
       name:
         type: string
       status:
-        type: string
+        type: integer
     type: object
   riderhdl.ResponseCreate:
     properties:
       id:
-        type: integer
+        type: string
       location:
         $ref: '#/definitions/domain.Location'
       name:
         type: string
       status:
-        type: string
+        type: integer
     type: object
   riderhdl.ResponseUpdate:
     properties:
       id:
-        type: integer
+        type: string
       location:
         $ref: '#/definitions/domain.Location'
       name:
         type: string
       status:
-        type: string
+        type: integer
     type: object
 info:
   contact: {}
 paths:
-  /riders:
+  /api/riders:
     get:
       consumes:
       - application/json
@@ -94,7 +90,7 @@ paths:
           schema:
             $ref: '#/definitions/riderhdl.ResponseCreate'
       summary: create rider
-  /riders/{id}:
+  /api/riders/{id}:
     get:
       description: gets a rider from the system by its ID
       parameters:
@@ -135,7 +131,7 @@ paths:
           schema:
             $ref: '#/definitions/riderhdl.ResponseUpdate'
       summary: update rider
-  /riders/{id}/location:
+  /api/riders/{id}/location:
     put:
       consumes:
       - application/json

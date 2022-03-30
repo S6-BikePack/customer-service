@@ -260,7 +260,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "internal/graph/schema.graphqls", Input: `type Rider{
+	{Name: "internal/graph/schema.graphqls", Input: `type Rider {
     id: String!
     name: String!
     status: Int!

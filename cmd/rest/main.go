@@ -5,9 +5,12 @@ import (
 	"log"
 	"os"
 	"rider-service/docs"
+	"rider-service/internal/core/services/rabbitmq_service"
 	"rider-service/internal/core/services/ridersrv"
+	"rider-service/internal/handlers"
 	"rider-service/internal/handlers/riderhdl"
 	"rider-service/internal/repositories/riderrepo"
+	"rider-service/pkg/rabbitmq"
 
 	"github.com/gin-gonic/gin"
 
@@ -16,26 +19,50 @@ import (
 )
 
 const defaultPort = ":1234"
+const defaultRmqConn = "amqp://user:password@localhost:5672/"
+const defaultDbConn = "postgresql://user:password@localhost:5432/rider"
 
 func main() {
 	setupSwagger()
 
-	riderRepository, err := riderrepo.NewCockroachDB("postgresql://root@localhost:26257/test?sslmode=disable")
+	dbConn := os.Getenv("DATABASE")
+	if dbConn == "" {
+		dbConn = defaultDbConn
+	}
+
+	riderRepository, err := riderrepo.NewCockroachDB(dbConn)
 
 	if err != nil {
 		panic(err)
 	}
 
-	riderService := ridersrv.New(riderRepository)
+	rmqConn := os.Getenv("RABBITMQ")
+	if rmqConn == "" {
+		rmqConn = defaultRmqConn
+	}
+
+	rmqServer, err := rabbitmq.NewRabbitMQ(rmqConn)
+
+	if err != nil {
+		panic(err)
+	}
+
+	rmqPublisher := rabbitmq_service.NewRabbitMQPublisher(rmqServer)
+
+	riderService := ridersrv.New(riderRepository, rmqPublisher)
+
+	rmqSubscriber := handlers.NewRabbitMQ(rmqServer, riderService)
+
 	riderHandler := riderhdl.NewHTTPHandler(riderService)
 
 	router := gin.New()
 
-	router.GET("/riders", riderHandler.GetAll)
-	router.GET("/riders/:id", riderHandler.Get)
-	router.POST("/riders", riderHandler.Create)
-	router.PUT("/riders/:id", riderHandler.UpdateRider)
-	router.PUT("/riders/:id/location", riderHandler.UpdateLocation)
+	api := router.Group("/api")
+	api.GET("/riders", riderHandler.GetAll)
+	api.GET("/riders/:id", riderHandler.Get)
+	api.POST("/riders", riderHandler.Create)
+	api.PUT("/riders/:id", riderHandler.UpdateRider)
+	api.PUT("/riders/:id/location", riderHandler.UpdateLocation)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -44,6 +71,7 @@ func main() {
 		port = defaultPort
 	}
 
+	go rmqSubscriber.Listen("delivery.#")
 	log.Fatal(router.Run(port))
 }
 

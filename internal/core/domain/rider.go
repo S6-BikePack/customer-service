@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Rider struct {
 	ID       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`

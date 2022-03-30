@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/riders": {
+        "/api/riders": {
             "get": {
                 "description": "gets all riders in the system",
                 "consumes": [
@@ -68,7 +68,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/riders/{id}": {
+        "/api/riders/{id}": {
             "get": {
                 "description": "gets a rider from the system by its ID",
                 "produces": [
@@ -130,7 +130,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/riders/{id}/location": {
+        "/api/riders/{id}/location": {
             "put": {
                 "description": "updates a rider's location",
                 "consumes": [
@@ -185,7 +185,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "location": {
                     "$ref": "#/definitions/domain.Location"
@@ -194,24 +194,18 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
         "riderhdl.BodyCreate": {
             "type": "object",
             "properties": {
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
                 "name": {
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -222,7 +216,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -230,7 +224,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "location": {
                     "$ref": "#/definitions/domain.Location"
@@ -239,7 +233,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -247,7 +241,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "location": {
                     "$ref": "#/definitions/domain.Location"
@@ -256,7 +250,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         }

@@ -24,7 +24,7 @@ func NewHTTPHandler(riderService ports.RiderService) *HTTPHandler {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  []domain.Rider
-// @Router       /riders [get]
+// @Router       /api/riders [get]
 func (hdl *HTTPHandler) GetAll(c *gin.Context) {
 	riders, err := hdl.riderService.GetAll()
 
@@ -43,7 +43,7 @@ func (hdl *HTTPHandler) GetAll(c *gin.Context) {
 // @Description  gets a rider from the system by its ID
 // @Produce      json
 // @Success      200  {object}  domain.Rider
-// @Router       /riders/{id} [get]
+// @Router       /api/riders/{id} [get]
 func (hdl *HTTPHandler) Get(c *gin.Context) {
 	uid, err := uuid.Parse(c.Param("id"))
 
@@ -70,7 +70,7 @@ func (hdl *HTTPHandler) Get(c *gin.Context) {
 // @Param        rider  body  BodyCreate  true  "Add rider"
 // @Produce      json
 // @Success      200  {object}  ResponseCreate
-// @Router       /riders [post]
+// @Router       /api/riders [post]
 func (hdl *HTTPHandler) Create(c *gin.Context) {
 	body := BodyCreate{}
 	err := c.BindJSON(&body)
@@ -98,7 +98,7 @@ func (hdl *HTTPHandler) Create(c *gin.Context) {
 // @Param        id     path  string      true  "Rider id"
 // @Produce      json
 // @Success      200  {object}  ResponseUpdate
-// @Router       /riders/{id} [put]
+// @Router       /api/riders/{id} [put]
 func (hdl *HTTPHandler) UpdateRider(c *gin.Context) {
 	body := BodyUpdate{}
 	err := c.BindJSON(&body)
@@ -133,7 +133,7 @@ func (hdl *HTTPHandler) UpdateRider(c *gin.Context) {
 // @Param        id  path  string  true  "Rider id"
 // @Produce      json
 // @Success      200  {object}  ResponseUpdate
-// @Router       /riders/{id}/location [put]
+// @Router       /api/riders/{id}/location [put]
 func (hdl *HTTPHandler) UpdateLocation(c *gin.Context) {
 	body := domain.Location{}
 	err := c.BindJSON(&body)

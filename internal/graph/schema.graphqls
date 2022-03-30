@@ -1,4 +1,4 @@
-type Rider{
+type Rider {
     id: String!
     name: String!
     status: Int!
