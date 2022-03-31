@@ -4,45 +4,45 @@
         "contact": {}
     },
     "paths": {
-        "/api/riders": {
+        "/api/customers": {
             "get": {
-                "description": "gets all riders in the system",
+                "description": "gets all customers in the system",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "get all riders",
+                "summary": "get all customers",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Rider"
+                                "$ref": "#/definitions/domain.Customer"
                             }
                         }
                     }
                 }
             },
             "post": {
-                "description": "creates a new rider",
+                "description": "creates a new customer",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "create rider",
+                "summary": "create customer",
                 "parameters": [
                     {
-                        "description": "Add rider",
-                        "name": "rider",
+                        "description": "Add customer",
+                        "name": "customer",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/riderhdl.BodyCreate"
+                            "$ref": "#/definitions/dto.BodyCreateCustomer"
                         }
                     }
                 ],
@@ -50,23 +50,54 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/riderhdl.ResponseCreate"
+                            "$ref": "#/definitions/dto.ResponseCreateCustomer"
                         }
                     }
                 }
             }
         },
-        "/api/riders/{id}": {
-            "get": {
-                "description": "gets a rider from the system by its ID",
+        "/api/customers/service-area{id}": {
+            "put": {
+                "description": "updates a customers service area",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "get rider",
+                "summary": "update customers service area",
+                "parameters": [
+                    {
+                        "description": "Update customer",
+                        "name": "customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.BodyUpdateServiceArea"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseUpdateServiceArea"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/{id}": {
+            "get": {
+                "description": "gets a customer from the system by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get customer",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Rider id",
+                        "description": "Customer id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -76,81 +107,36 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Rider"
+                            "$ref": "#/definitions/domain.Customer"
                         }
                     }
                 }
             },
             "put": {
-                "description": "updates a rider's information",
+                "description": "updates a customers name, last name and/or email",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "update rider",
+                "summary": "update customer details",
                 "parameters": [
                     {
-                        "description": "Update rider",
-                        "name": "rider",
+                        "description": "Update customer",
+                        "name": "customer",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/riderhdl.BodyUpdate"
+                            "$ref": "#/definitions/dto.BodyUpdateCustomer"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Rider id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/riderhdl.ResponseUpdate"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/riders/{id}/location": {
-            "put": {
-                "description": "updates a rider's location",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "update rider location",
-                "parameters": [
-                    {
-                        "description": "Update rider",
-                        "name": "rider",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.Location"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Rider id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/riderhdl.ResponseUpdate"
+                            "$ref": "#/definitions/dto.ResponseUpdateCustomer"
                         }
                     }
                 }
@@ -158,86 +144,118 @@
         }
     },
     "definitions": {
-        "domain.Location": {
+        "domain.Customer": {
             "type": "object",
             "properties": {
-                "latitude": {
-                    "type": "number"
+                "email": {
+                    "type": "string"
                 },
-                "longitude": {
-                    "type": "number"
-                }
-            }
-        },
-        "domain.Rider": {
-            "type": "object",
-            "properties": {
                 "id": {
                     "type": "string"
                 },
-                "location": {
-                    "$ref": "#/definitions/domain.Location"
+                "lastName": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "status": {
+                "serviceArea": {
                     "type": "integer"
                 }
             }
         },
-        "riderhdl.BodyCreate": {
+        "dto.BodyCreateCustomer": {
             "type": "object",
             "properties": {
-                "name": {
+                "email": {
                     "type": "string"
                 },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "riderhdl.BodyUpdate": {
-            "type": "object",
-            "properties": {
-                "name": {
+                "lastName": {
                     "type": "string"
                 },
-                "status": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.BodyUpdateCustomer": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.BodyUpdateServiceArea": {
+            "type": "object",
+            "properties": {
+                "serviceArea": {
                     "type": "integer"
                 }
             }
         },
-        "riderhdl.ResponseCreate": {
+        "dto.ResponseCreateCustomer": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
-                "location": {
-                    "$ref": "#/definitions/domain.Location"
+                "lastName": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "status": {
+                "serviceArea": {
                     "type": "integer"
                 }
             }
         },
-        "riderhdl.ResponseUpdate": {
+        "dto.ResponseUpdateCustomer": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
-                "location": {
-                    "$ref": "#/definitions/domain.Location"
+                "lastName": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "status": {
+                "serviceArea": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ResponseUpdateServiceArea": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "serviceArea": {
                     "type": "integer"
                 }
             }

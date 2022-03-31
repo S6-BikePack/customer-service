@@ -1,10 +1,11 @@
 package ports
 
 import (
-	"rider-service/internal/core/domain"
+	"customer-service/internal/core/domain"
 )
 
 type MessageBusPublisher interface {
-	CreateRider(rider domain.Rider) error
-	UpdateRider(rider domain.Rider) error
+	CreateCustomer(customer domain.Customer) error
+	UpdateCustomerDetails(customer domain.Customer) error
+	UpdateServiceArea(customer domain.Customer) error
 }

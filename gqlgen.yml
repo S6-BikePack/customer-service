@@ -35,7 +35,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "rider-service/graph/model"
+#  - "customer-service/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -44,9 +44,9 @@ autobind:
 # your liking
 models:
   Rider:
-    model: rider-service/internal/core/domain.Rider
+    model: customer-service/internal/core/domain.Rider
   Location:
-    model: rider-service/internal/core/domain.Location
+    model: customer-service/internal/core/domain.Location
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID

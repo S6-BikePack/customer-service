@@ -1,66 +1,87 @@
 definitions:
-  domain.Location:
+  domain.Customer:
     properties:
-      latitude:
-        type: number
-      longitude:
-        type: number
-    type: object
-  domain.Rider:
-    properties:
+      email:
+        type: string
       id:
         type: string
-      location:
-        $ref: '#/definitions/domain.Location'
+      lastName:
+        type: string
       name:
         type: string
-      status:
+      serviceArea:
         type: integer
     type: object
-  riderhdl.BodyCreate:
+  dto.BodyCreateCustomer:
     properties:
+      email:
+        type: string
+      lastName:
+        type: string
       name:
         type: string
-      status:
-        type: integer
     type: object
-  riderhdl.BodyUpdate:
+  dto.BodyUpdateCustomer:
     properties:
+      email:
+        type: string
+      lastName:
+        type: string
       name:
         type: string
-      status:
+    type: object
+  dto.BodyUpdateServiceArea:
+    properties:
+      serviceArea:
         type: integer
     type: object
-  riderhdl.ResponseCreate:
+  dto.ResponseCreateCustomer:
     properties:
+      email:
+        type: string
       id:
         type: string
-      location:
-        $ref: '#/definitions/domain.Location'
+      lastName:
+        type: string
       name:
         type: string
-      status:
+      serviceArea:
         type: integer
     type: object
-  riderhdl.ResponseUpdate:
+  dto.ResponseUpdateCustomer:
     properties:
+      email:
+        type: string
       id:
         type: string
-      location:
-        $ref: '#/definitions/domain.Location'
+      lastName:
+        type: string
       name:
         type: string
-      status:
+      serviceArea:
+        type: integer
+    type: object
+  dto.ResponseUpdateServiceArea:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      name:
+        type: string
+      serviceArea:
         type: integer
     type: object
 info:
   contact: {}
 paths:
-  /api/riders:
+  /api/customers:
     get:
       consumes:
       - application/json
-      description: gets all riders in the system
+      description: gets all customers in the system
       produces:
       - application/json
       responses:
@@ -68,33 +89,33 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/domain.Rider'
+              $ref: '#/definitions/domain.Customer'
             type: array
-      summary: get all riders
+      summary: get all customers
     post:
       consumes:
       - application/json
-      description: creates a new rider
+      description: creates a new customer
       parameters:
-      - description: Add rider
+      - description: Add customer
         in: body
-        name: rider
+        name: customer
         required: true
         schema:
-          $ref: '#/definitions/riderhdl.BodyCreate'
+          $ref: '#/definitions/dto.BodyCreateCustomer'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/riderhdl.ResponseCreate'
-      summary: create rider
-  /api/riders/{id}:
+            $ref: '#/definitions/dto.ResponseCreateCustomer'
+      summary: create customer
+  /api/customers/{id}:
     get:
-      description: gets a rider from the system by its ID
+      description: gets a customer from the system by its ID
       parameters:
-      - description: Rider id
+      - description: Customer id
         in: path
         name: id
         required: true
@@ -105,55 +126,45 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Rider'
-      summary: get rider
+            $ref: '#/definitions/domain.Customer'
+      summary: get customer
     put:
       consumes:
       - application/json
-      description: updates a rider's information
+      description: updates a customers name, last name and/or email
       parameters:
-      - description: Update rider
+      - description: Update customer
         in: body
-        name: rider
+        name: customer
         required: true
         schema:
-          $ref: '#/definitions/riderhdl.BodyUpdate'
-      - description: Rider id
-        in: path
-        name: id
-        required: true
-        type: string
+          $ref: '#/definitions/dto.BodyUpdateCustomer'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/riderhdl.ResponseUpdate'
-      summary: update rider
-  /api/riders/{id}/location:
+            $ref: '#/definitions/dto.ResponseUpdateCustomer'
+      summary: update customer details
+  /api/customers/service-area{id}:
     put:
       consumes:
       - application/json
-      description: updates a rider's location
+      description: updates a customers service area
       parameters:
-      - description: Update rider
+      - description: Update customer
         in: body
-        name: rider
+        name: customer
         required: true
         schema:
-          $ref: '#/definitions/domain.Location'
-      - description: Rider id
-        in: path
-        name: id
-        required: true
-        type: string
+          $ref: '#/definitions/dto.BodyUpdateServiceArea'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/riderhdl.ResponseUpdate'
-      summary: update rider location
+            $ref: '#/definitions/dto.ResponseUpdateServiceArea'
+      summary: update customers service area
 swagger: "2.0"
