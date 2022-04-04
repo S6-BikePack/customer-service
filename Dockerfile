@@ -17,6 +17,13 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 
 COPY --from=rest /app/server /app/server
 
+LABEL traefik.enable=true
+LABEL traefik.http.routers.customer-rest.rule=PathPrefix(`/api/customers`)
+LABEL traefik.http.routers.customer-rest.entrypoints=web
+LABEL traefik.http.routers.customer-swagger.rule=PathPrefix(`/swagger/customer`)
+LABEL traefik.http.routers.customer-swagger.entrypoints=web
+LABEL traefik.http.routers.customer-service.middlewares='serviceheaders'
+
 EXPOSE 1234
 
 CMD ["/app/server"]

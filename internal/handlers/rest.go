@@ -37,7 +37,7 @@ func (handler *HTTPHandler) SetupSwagger() {
 	docs.SwaggerInfo.Title = "Customer service API"
 	docs.SwaggerInfo.Description = "The customer service manages all customers for the BikePack system."
 
-	handler.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	handler.router.GET("/swagger/customer/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 // GetAll godoc
