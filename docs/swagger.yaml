@@ -139,6 +139,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.BodyUpdateCustomer'
+      - description: Customer id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -147,7 +152,7 @@ paths:
           schema:
             $ref: '#/definitions/dto.ResponseUpdateCustomer'
       summary: update customer details
-  /api/customers/service-area{id}:
+  /api/customers/{id}/service-area:
     put:
       consumes:
       - application/json
@@ -159,6 +164,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.BodyUpdateServiceArea'
+      - description: Customer id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:

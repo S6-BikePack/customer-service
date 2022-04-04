@@ -118,6 +118,7 @@ func (handler *HTTPHandler) Create(c *gin.Context) {
 // @Description  updates a customers name, last name and/or email
 // @Accept       json
 // @Param        customer  body  dto.BodyUpdateCustomer  true  "Update customer"
+// @Param        id  path  string  true  "Customer id"
 // @Produce      json
 // @Success      200  {object}  dto.ResponseUpdateCustomer
 // @Router       /api/customers/{id} [put]
@@ -152,9 +153,10 @@ func (handler *HTTPHandler) UpdateDetails(c *gin.Context) {
 // @Description  updates a customers service area
 // @Accept       json
 // @Param        customer  body  dto.BodyUpdateServiceArea  true  "Update customer"
+// @Param        id  path  string  true  "Customer id"
 // @Produce      json
 // @Success      200  {object}  dto.ResponseUpdateServiceArea
-// @Router       /api/customers/service-area{id} [put]
+// @Router       /api/customers/{id}/service-area [put]
 func (handler *HTTPHandler) UpdateServiceArea(c *gin.Context) {
 	body := dto.BodyUpdateServiceArea{}
 	err := c.BindJSON(&body)

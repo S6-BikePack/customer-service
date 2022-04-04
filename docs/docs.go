@@ -68,37 +68,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/customers/service-area{id}": {
-            "put": {
-                "description": "updates a customers service area",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "update customers service area",
-                "parameters": [
-                    {
-                        "description": "Update customer",
-                        "name": "customer",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.BodyUpdateServiceArea"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ResponseUpdateServiceArea"
-                        }
-                    }
-                }
-            }
-        },
         "/api/customers/{id}": {
             "get": {
                 "description": "gets a customer from the system by its ID",
@@ -142,6 +111,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/dto.BodyUpdateCustomer"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Customer id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -149,6 +125,44 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.ResponseUpdateCustomer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/{id}/service-area": {
+            "put": {
+                "description": "updates a customers service area",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "update customers service area",
+                "parameters": [
+                    {
+                        "description": "Update customer",
+                        "name": "customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.BodyUpdateServiceArea"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Customer id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseUpdateServiceArea"
                         }
                     }
                 }
