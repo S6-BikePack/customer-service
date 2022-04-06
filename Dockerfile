@@ -22,7 +22,10 @@ LABEL traefik.http.routers.customer-rest.rule=PathPrefix(`/api/customers`)
 LABEL traefik.http.routers.customer-rest.entrypoints=web
 LABEL traefik.http.routers.customer-swagger.rule=PathPrefix(`/swagger/customer`)
 LABEL traefik.http.routers.customer-swagger.entrypoints=web
-LABEL traefik.http.routers.customer-service.middlewares='serviceheaders'
+LABEL traefik.http.routers.customer-rest.middlewares='serviceheaders, traefik-forward-auth'
+LABEL traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=*
+LABEL traefik.http.middlewares.serviceheaders.headers.accessControlAllowMethods='GET, POST'
+LABEL traefik.http.middlewares.serviceheaders.headers.accessControlAllowHeaders='authorization, content-type'
 
 EXPOSE 1234
 

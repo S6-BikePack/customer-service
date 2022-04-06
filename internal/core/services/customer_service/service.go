@@ -4,7 +4,6 @@ import (
 	"customer-service/internal/core/domain"
 	"customer-service/internal/core/ports"
 	"errors"
-	"github.com/google/uuid"
 )
 
 type service struct {
@@ -23,14 +22,16 @@ func (srv *service) GetAll() ([]domain.Customer, error) {
 	return srv.customerRepository.GetAll()
 }
 
-func (srv *service) Get(uuid uuid.UUID) (domain.Customer, error) {
-	return srv.customerRepository.Get(uuid)
+func (srv *service) Get(id string) (domain.Customer, error) {
+	return srv.customerRepository.Get(id)
 }
 
-func (srv *service) Create(name, lastName, email string) (domain.Customer, error) {
-	customer := domain.NewCustomer(name, lastName, email, 0)
+func (srv *service) Create(userId string, serviceArea int) (domain.Customer, error) {
+	user, err := srv.customerRepository.GetUser(userId)
 
-	customer, err := srv.customerRepository.Save(customer)
+	customer := domain.NewCustomer(user, serviceArea)
+
+	customer, err = srv.customerRepository.Save(customer)
 
 	if err != nil {
 		return domain.Customer{}, errors.New("saving new customer failed")
@@ -40,37 +41,8 @@ func (srv *service) Create(name, lastName, email string) (domain.Customer, error
 	return customer, nil
 }
 
-func (srv *service) UpdateCustomerDetails(uuid uuid.UUID, name, lastName, email string) (domain.Customer, error) {
-	customer, err := srv.Get(uuid)
-
-	if err != nil {
-		return domain.Customer{}, errors.New("could not find customer with id")
-	}
-
-	if name != "" {
-		customer.Name = name
-	}
-
-	if lastName != "" {
-		customer.LastName = lastName
-	}
-
-	if email != "" {
-		customer.Email = email
-	}
-
-	customer, err = srv.customerRepository.Update(customer)
-
-	if err != nil {
-		return domain.Customer{}, errors.New("saving new customer failed")
-	}
-
-	srv.messagePublisher.UpdateCustomerDetails(customer)
-	return customer, nil
-}
-
-func (srv *service) UpdateServiceArea(uuid uuid.UUID, serviceArea int) (domain.Customer, error) {
-	customer, err := srv.Get(uuid)
+func (srv *service) UpdateServiceArea(id string, serviceArea int) (domain.Customer, error) {
+	customer, err := srv.Get(id)
 
 	if err != nil {
 		return domain.Customer{}, errors.New("could not find customer with id")
@@ -86,4 +58,14 @@ func (srv *service) UpdateServiceArea(uuid uuid.UUID, serviceArea int) (domain.C
 
 	srv.messagePublisher.UpdateServiceArea(customer)
 	return customer, nil
+}
+
+func (srv *service) SaveOrUpdateUser(user domain.User) error {
+	if user.Name == "" || user.LastName == "" || user.ID == "" {
+		return errors.New("incomplete user data")
+	}
+
+	err := srv.customerRepository.SaveOrUpdateCustomer(user)
+
+	return err
 }

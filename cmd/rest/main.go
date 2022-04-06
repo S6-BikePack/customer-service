@@ -37,6 +37,8 @@ func main() {
 
 	customerService := customer_service.New(customerRepository, rmqPublisher)
 
+	rmqSubscriber := handlers.NewRabbitMQ(rmqServer, customerService)
+
 	router := gin.New()
 
 	customerHandler := handlers.NewRest(customerService, router)
@@ -45,6 +47,7 @@ func main() {
 
 	port := GetEnvOrDefault("PORT", defaultPort)
 
+	go rmqSubscriber.Listen()
 	log.Fatal(router.Run(port))
 }
 

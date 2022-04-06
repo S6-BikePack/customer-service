@@ -1,20 +1,15 @@
 package domain
 
-import "github.com/google/uuid"
-
 type Customer struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
-	Name        string
-	LastName    string
-	Email       string
+	UserID      string `gorm:"primaryKey"`
+	User        User
 	ServiceArea int
 }
 
-func NewCustomer(name, lastName, email string, serviceArea int) Customer {
+func NewCustomer(user User, serviceArea int) Customer {
 	return Customer{
-		Name:        name,
-		LastName:    lastName,
-		Email:       email,
+		UserID:      user.ID,
+		User:        user,
 		ServiceArea: serviceArea,
 	}
 }

@@ -3,9 +3,8 @@ package dto
 import "customer-service/internal/core/domain"
 
 type BodyCreateCustomer struct {
-	Name     string
-	LastName string
-	Email    string
+	ID          string
+	ServiceArea int
 }
 
 type ResponseCreateCustomer domain.Customer

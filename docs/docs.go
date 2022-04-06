@@ -92,42 +92,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "put": {
-                "description": "updates a customers name, last name and/or email",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "update customer details",
-                "parameters": [
-                    {
-                        "description": "Update customer",
-                        "name": "customer",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.BodyUpdateCustomer"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Customer id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ResponseUpdateCustomer"
-                        }
-                    }
-                }
             }
         },
         "/api/customers/{id}/service-area": {
@@ -173,9 +137,20 @@ const docTemplate = `{
         "domain.Customer": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
+                "serviceArea": {
+                    "type": "integer"
                 },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.User": {
+            "type": "object",
+            "properties": {
                 "id": {
                     "type": "string"
                 },
@@ -184,37 +159,14 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "serviceArea": {
-                    "type": "integer"
                 }
             }
         },
         "dto.BodyCreateCustomer": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.BodyUpdateCustomer": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
+                "serviceArea": {
+                    "type": "integer"
                 }
             }
         },
@@ -229,60 +181,28 @@ const docTemplate = `{
         "dto.ResponseCreateCustomer": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
                 "serviceArea": {
                     "type": "integer"
-                }
-            }
-        },
-        "dto.ResponseUpdateCustomer": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
                 },
-                "id": {
-                    "type": "string"
+                "user": {
+                    "$ref": "#/definitions/domain.User"
                 },
-                "lastName": {
+                "userID": {
                     "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "serviceArea": {
-                    "type": "integer"
                 }
             }
         },
         "dto.ResponseUpdateServiceArea": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
                 "serviceArea": {
                     "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "userID": {
+                    "type": "string"
                 }
             }
         }

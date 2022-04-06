@@ -1,34 +1,26 @@
 definitions:
   domain.Customer:
     properties:
-      email:
+      serviceArea:
+        type: integer
+      user:
+        $ref: '#/definitions/domain.User'
+      userID:
         type: string
+    type: object
+  domain.User:
+    properties:
       id:
         type: string
       lastName:
         type: string
       name:
         type: string
-      serviceArea:
-        type: integer
     type: object
   dto.BodyCreateCustomer:
     properties:
-      email:
-        type: string
-      lastName:
-        type: string
-      name:
-        type: string
-    type: object
-  dto.BodyUpdateCustomer:
-    properties:
-      email:
-        type: string
-      lastName:
-        type: string
-      name:
-        type: string
+      serviceArea:
+        type: integer
     type: object
   dto.BodyUpdateServiceArea:
     properties:
@@ -37,42 +29,21 @@ definitions:
     type: object
   dto.ResponseCreateCustomer:
     properties:
-      email:
-        type: string
-      id:
-        type: string
-      lastName:
-        type: string
-      name:
-        type: string
       serviceArea:
         type: integer
-    type: object
-  dto.ResponseUpdateCustomer:
-    properties:
-      email:
+      user:
+        $ref: '#/definitions/domain.User'
+      userID:
         type: string
-      id:
-        type: string
-      lastName:
-        type: string
-      name:
-        type: string
-      serviceArea:
-        type: integer
     type: object
   dto.ResponseUpdateServiceArea:
     properties:
-      email:
-        type: string
-      id:
-        type: string
-      lastName:
-        type: string
-      name:
-        type: string
       serviceArea:
         type: integer
+      user:
+        $ref: '#/definitions/domain.User'
+      userID:
+        type: string
     type: object
 info:
   contact: {}
@@ -128,30 +99,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.Customer'
       summary: get customer
-    put:
-      consumes:
-      - application/json
-      description: updates a customers name, last name and/or email
-      parameters:
-      - description: Update customer
-        in: body
-        name: customer
-        required: true
-        schema:
-          $ref: '#/definitions/dto.BodyUpdateCustomer'
-      - description: Customer id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.ResponseUpdateCustomer'
-      summary: update customer details
   /api/customers/{id}/service-area:
     put:
       consumes:

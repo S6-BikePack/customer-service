@@ -1,13 +1,14 @@
 module customer-service
 
-go 1.17
+go 1.18
 
 require (
 	github.com/99designs/gqlgen v0.17.2
 	github.com/gin-gonic/gin v1.7.7
-	github.com/google/uuid v1.3.0
 	github.com/rabbitmq/amqp091-go v1.3.2
 	github.com/swaggo/gin-swagger v1.4.1
+	github.com/swaggo/swag v1.8.0
+	golang.org/x/exp v0.0.0-20220328175248-053ad81199eb
 	gorm.io/driver/postgres v1.3.1
 	gorm.io/gorm v1.23.3
 )
@@ -46,7 +47,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/swaggo/swag v1.8.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.4.0 // indirect

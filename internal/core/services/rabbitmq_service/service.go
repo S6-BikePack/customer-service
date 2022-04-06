@@ -25,18 +25,6 @@ func (rmq *rabbitmqPublisher) CreateCustomer(customer domain.Customer) error {
 	return err
 }
 
-func (rmq *rabbitmqPublisher) UpdateCustomerDetails(customer domain.Customer) error {
-	js, err := json.Marshal(customer)
-
-	if err != nil {
-		return err
-	}
-
-	err = rmq.publishMessage("customer.update.details", js)
-
-	return err
-}
-
 func (rmq *rabbitmqPublisher) UpdateServiceArea(customer domain.Customer) error {
 	js, err := json.Marshal(customer)
 

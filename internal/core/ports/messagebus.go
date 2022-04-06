@@ -6,6 +6,5 @@ import (
 
 type MessageBusPublisher interface {
 	CreateCustomer(customer domain.Customer) error
-	UpdateCustomerDetails(customer domain.Customer) error
 	UpdateServiceArea(customer domain.Customer) error
 }
