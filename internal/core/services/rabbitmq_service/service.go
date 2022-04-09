@@ -14,39 +14,30 @@ func NewRabbitMQPublisher(rabbitmq *rabbitmq.RabbitMQ) *rabbitmqPublisher {
 }
 
 func (rmq *rabbitmqPublisher) CreateCustomer(customer domain.Customer) error {
-	js, err := json.Marshal(customer)
+	return rmq.publishJson("customer.create", customer)
 
-	if err != nil {
-		return err
-	}
-
-	err = rmq.publishMessage("customer.create", js)
-
-	return err
 }
 
 func (rmq *rabbitmqPublisher) UpdateServiceArea(customer domain.Customer) error {
-	js, err := json.Marshal(customer)
+	return rmq.publishJson("customer.update.serviceArea", customer)
+}
+
+func (rmq *rabbitmqPublisher) publishJson(topic string, body interface{}) error {
+	js, err := json.Marshal(body)
 
 	if err != nil {
 		return err
 	}
 
-	err = rmq.publishMessage("customer.update.serviceArea", js)
-
-	return err
-}
-
-func (rmq *rabbitmqPublisher) publishMessage(key string, body []byte) error {
-	err := rmq.Channel.Publish(
+	err = rmq.Channel.Publish(
 		"topics",
-		key,
+		topic,
 		false,
 		false,
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
 			ContentType:  "text/plain",
-			Body:         body,
+			Body:         js,
 		},
 	)
 

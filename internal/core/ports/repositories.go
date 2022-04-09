@@ -9,6 +9,6 @@ type CustomerRepository interface {
 	Get(id string) (domain.Customer, error)
 	Save(customer domain.Customer) (domain.Customer, error)
 	Update(customer domain.Customer) (domain.Customer, error)
-	SaveOrUpdateCustomer(user domain.User) error
+	SaveOrUpdateUser(user domain.User) error
 	GetUser(id string) (domain.User, error)
 }

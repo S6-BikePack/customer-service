@@ -65,7 +65,7 @@ func (srv *service) SaveOrUpdateUser(user domain.User) error {
 		return errors.New("incomplete user data")
 	}
 
-	err := srv.customerRepository.SaveOrUpdateCustomer(user)
+	err := srv.customerRepository.SaveOrUpdateUser(user)
 
 	return err
 }
