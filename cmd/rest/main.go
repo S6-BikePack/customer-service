@@ -6,6 +6,8 @@ import (
 	"customer-service/internal/handlers"
 	"customer-service/internal/repositories"
 	"customer-service/pkg/rabbitmq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 	"os"
 
@@ -19,7 +21,13 @@ const defaultDbConn = "postgresql://user:password@localhost:5432/customer"
 func main() {
 	dbConn := GetEnvOrDefault("DATABASE", defaultDbConn)
 
-	customerRepository, err := repositories.NewCockroachDB(dbConn)
+	db, err := gorm.Open(postgres.Open(dbConn))
+
+	if err != nil {
+		panic(err)
+	}
+
+	customerRepository, err := repositories.NewCockroachDB(db)
 
 	if err != nil {
 		panic(err)

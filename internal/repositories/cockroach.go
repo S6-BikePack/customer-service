@@ -3,7 +3,6 @@ package repositories
 import (
 	"customer-service/internal/core/domain"
 	"errors"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -12,14 +11,8 @@ type cockroachdb struct {
 	Connection *gorm.DB
 }
 
-func NewCockroachDB(connStr string) (*cockroachdb, error) {
-	db, err := gorm.Open(postgres.Open(connStr))
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.AutoMigrate(&domain.Customer{})
+func NewCockroachDB(db *gorm.DB) (*cockroachdb, error) {
+	err := db.AutoMigrate(&domain.Customer{})
 
 	if err != nil {
 		return nil, err
@@ -72,7 +65,7 @@ func (repository *cockroachdb) Update(customer domain.Customer) (domain.Customer
 	return customer, nil
 }
 
-func (repository *cockroachdb) SaveOrUpdateCustomer(user domain.User) error {
+func (repository *cockroachdb) SaveOrUpdateUser(user domain.User) error {
 	updateResult := repository.Connection.Model(&user).Where("id = ?", user.ID).Updates(&user)
 
 	if updateResult.RowsAffected == 0 {
