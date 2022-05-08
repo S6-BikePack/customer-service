@@ -14,7 +14,15 @@ func NewRabbitMQPublisher(rabbitmq *rabbitmq.RabbitMQ) *rabbitmqPublisher {
 }
 
 func (rmq *rabbitmqPublisher) CreateCustomer(customer domain.Customer) error {
-	return rmq.publishJson("customer.create", customer)
+	var body = struct {
+		ID          string
+		ServiceArea int
+	}{
+		ID:          customer.UserID,
+		ServiceArea: customer.ServiceArea,
+	}
+
+	return rmq.publishJson("customer.create", body)
 
 }
 
