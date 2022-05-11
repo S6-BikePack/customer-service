@@ -76,7 +76,7 @@ func main() {
 		logger.Fatal(context.Background(), err)
 	}
 
-	customerRepository, err := repositories.NewCockroachDB(db)
+	customerRepository, err := repositories.NewCustomerRepository(db)
 
 	if err != nil {
 		logger.Fatal(context.Background(), err)

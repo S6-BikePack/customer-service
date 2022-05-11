@@ -23,6 +23,10 @@ func NewRabbitMQPublisher(rabbitmq *rabbitmq.RabbitMQ, tracerProvider trace.Trac
 }
 
 func (rmq *rabbitmqPublisher) CreateCustomer(ctx context.Context, customer domain.Customer) error {
+	return rmq.publishJson(ctx, "create", customer)
+}
+
+func (rmq *rabbitmqPublisher) UpdateServiceArea(ctx context.Context, customer domain.Customer) error {
 	var body = struct {
 		ID          string
 		ServiceArea int
@@ -31,11 +35,7 @@ func (rmq *rabbitmqPublisher) CreateCustomer(ctx context.Context, customer domai
 		ServiceArea: customer.ServiceArea,
 	}
 
-	return rmq.publishJson(ctx, "create", body)
-}
-
-func (rmq *rabbitmqPublisher) UpdateServiceArea(ctx context.Context, customer domain.Customer) error {
-	return rmq.publishJson(ctx, "update.serviceArea", customer)
+	return rmq.publishJson(ctx, "update.serviceArea", body)
 }
 
 func (rmq *rabbitmqPublisher) publishJson(ctx context.Context, topic string, body interface{}) error {

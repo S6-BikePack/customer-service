@@ -123,7 +123,7 @@ func (handler *HTTPHandler) Create(c *gin.Context) {
 	body := dto.BodyCreateCustomer{}
 	err := c.BindJSON(&body)
 
-	if err != nil {
+	if err != nil || body == (dto.BodyCreateCustomer{}) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}

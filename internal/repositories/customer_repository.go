@@ -8,25 +8,25 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type cockroachdb struct {
+type customerRepository struct {
 	Connection *gorm.DB
 }
 
-func NewCockroachDB(db *gorm.DB) (*cockroachdb, error) {
+func NewCustomerRepository(db *gorm.DB) (*customerRepository, error) {
 	err := db.AutoMigrate(&domain.Customer{})
 
 	if err != nil {
 		return nil, err
 	}
 
-	database := cockroachdb{
+	database := customerRepository{
 		Connection: db,
 	}
 
 	return &database, nil
 }
 
-func (repository *cockroachdb) Get(ctx context.Context, id string) (domain.Customer, error) {
+func (repository *customerRepository) Get(ctx context.Context, id string) (domain.Customer, error) {
 	var customer domain.Customer
 
 	repository.Connection.WithContext(ctx).Preload(clause.Associations).First(&customer, "user_id = ?", id)
@@ -38,7 +38,7 @@ func (repository *cockroachdb) Get(ctx context.Context, id string) (domain.Custo
 	return customer, nil
 }
 
-func (repository *cockroachdb) GetAll(ctx context.Context) ([]domain.Customer, error) {
+func (repository *customerRepository) GetAll(ctx context.Context) ([]domain.Customer, error) {
 	var customers []domain.Customer
 
 	repository.Connection.WithContext(ctx).Find(&customers)
@@ -46,7 +46,7 @@ func (repository *cockroachdb) GetAll(ctx context.Context) ([]domain.Customer, e
 	return customers, nil
 }
 
-func (repository *cockroachdb) Save(ctx context.Context, customer domain.Customer) (domain.Customer, error) {
+func (repository *customerRepository) Save(ctx context.Context, customer domain.Customer) (domain.Customer, error) {
 	result := repository.Connection.WithContext(ctx).Omit("User").Create(&customer)
 
 	if result.Error != nil {
@@ -56,7 +56,7 @@ func (repository *cockroachdb) Save(ctx context.Context, customer domain.Custome
 	return customer, nil
 }
 
-func (repository *cockroachdb) Update(ctx context.Context, customer domain.Customer) (domain.Customer, error) {
+func (repository *customerRepository) Update(ctx context.Context, customer domain.Customer) (domain.Customer, error) {
 	result := repository.Connection.WithContext(ctx).Model(&customer).Updates(customer)
 
 	if result.Error != nil {
@@ -66,7 +66,7 @@ func (repository *cockroachdb) Update(ctx context.Context, customer domain.Custo
 	return customer, nil
 }
 
-func (repository *cockroachdb) SaveOrUpdateUser(ctx context.Context, user domain.User) error {
+func (repository *customerRepository) SaveOrUpdateUser(ctx context.Context, user domain.User) error {
 	updateResult := repository.Connection.WithContext(ctx).Model(&user).Where("id = ?", user.ID).Updates(&user)
 
 	if updateResult.RowsAffected == 0 {
@@ -84,7 +84,7 @@ func (repository *cockroachdb) SaveOrUpdateUser(ctx context.Context, user domain
 	return nil
 }
 
-func (repository *cockroachdb) GetUser(ctx context.Context, id string) (domain.User, error) {
+func (repository *customerRepository) GetUser(ctx context.Context, id string) (domain.User, error) {
 	var user domain.User
 
 	repository.Connection.WithContext(ctx).Preload(clause.Associations).First(&user, "id = ?", id)
