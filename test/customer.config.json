@@ -1,0 +1,23 @@
+{
+    "server": {
+      "service": "test-customer-service",
+      "port": ":1234",
+      "description": "Stores customers of the Bikepack system."
+    },
+    "rabbitMQ": {
+      "host": "test_customer_service_rabbitmq",
+      "port": 5672,
+      "user": "user",
+      "password": "password",
+      "exchange": "topics"
+    },
+    "database": {
+      "host": "test_customer_service_postgres",
+      "port": 5432,
+      "user": "user",
+      "password": "password",
+      "database": "customer",
+      "debug": true
+    }
+  }
+

@@ -1,0 +1,27 @@
+{
+  "server": {
+    "service": "customer-service",
+    "port": ":1221",
+    "description": "Stores customers of the Bikepack system."
+  },
+  "rabbitMQ": {
+    "host": "localhost",
+    "port": 5672,
+    "user": "user",
+    "password": "password",
+    "exchange": "topics"
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "user": "user",
+    "password": "password",
+    "database": "customer",
+    "debug": true
+  },
+  "tracing": {
+    "host": "localhost",
+    "port": 6831
+  }
+}
+

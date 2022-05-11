@@ -32,7 +32,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Customer"
+                                "$ref": "#/definitions/dto.customerResponse"
                             }
                         }
                     }
@@ -62,7 +62,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseCreateCustomer"
+                            "$ref": "#/definitions/dto.CustomerResponse"
                         }
                     }
                 }
@@ -88,7 +88,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Customer"
+                            "$ref": "#/definitions/dto.CustomerResponse"
                         }
                     }
                 }
@@ -126,7 +126,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseUpdateServiceArea"
+                            "$ref": "#/definitions/dto.CustomerResponse"
                         }
                     }
                 }
@@ -134,37 +134,12 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Customer": {
-            "type": "object",
-            "properties": {
-                "serviceArea": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
-                },
-                "userID": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.User": {
+        "dto.BodyCreateCustomer": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "string"
                 },
-                "lastName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.BodyCreateCustomer": {
-            "type": "object",
-            "properties": {
                 "serviceArea": {
                     "type": "integer"
                 }
@@ -178,31 +153,34 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ResponseCreateCustomer": {
+        "dto.CustomerResponse": {
             "type": "object",
             "properties": {
-                "serviceArea": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
-                },
-                "userID": {
+                "id": {
                     "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "service_area": {
+                    "type": "integer"
                 }
             }
         },
-        "dto.ResponseUpdateServiceArea": {
+        "dto.customerResponse": {
             "type": "object",
             "properties": {
-                "serviceArea": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
-                },
-                "userID": {
+                "id": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "service_area": {
+                    "type": "integer"
                 }
             }
         }

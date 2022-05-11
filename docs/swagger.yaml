@@ -1,24 +1,8 @@
 definitions:
-  domain.Customer:
-    properties:
-      serviceArea:
-        type: integer
-      user:
-        $ref: '#/definitions/domain.User'
-      userID:
-        type: string
-    type: object
-  domain.User:
+  dto.BodyCreateCustomer:
     properties:
       id:
         type: string
-      lastName:
-        type: string
-      name:
-        type: string
-    type: object
-  dto.BodyCreateCustomer:
-    properties:
       serviceArea:
         type: integer
     type: object
@@ -27,23 +11,25 @@ definitions:
       serviceArea:
         type: integer
     type: object
-  dto.ResponseCreateCustomer:
+  dto.CustomerResponse:
     properties:
-      serviceArea:
-        type: integer
-      user:
-        $ref: '#/definitions/domain.User'
-      userID:
+      id:
         type: string
+      last_name:
+        type: string
+      name:
+        type: string
+      service_area:
+        type: integer
     type: object
-  dto.ResponseUpdateServiceArea:
+  dto.customerResponse:
     properties:
-      serviceArea:
-        type: integer
-      user:
-        $ref: '#/definitions/domain.User'
-      userID:
+      id:
         type: string
+      name:
+        type: string
+      service_area:
+        type: integer
     type: object
 info:
   contact: {}
@@ -60,7 +46,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/domain.Customer'
+              $ref: '#/definitions/dto.customerResponse'
             type: array
       summary: get all customers
     post:
@@ -80,7 +66,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ResponseCreateCustomer'
+            $ref: '#/definitions/dto.CustomerResponse'
       summary: create customer
   /api/customers/{id}:
     get:
@@ -97,7 +83,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Customer'
+            $ref: '#/definitions/dto.CustomerResponse'
       summary: get customer
   /api/customers/{id}/service-area:
     put:
@@ -122,6 +108,6 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ResponseUpdateServiceArea'
+            $ref: '#/definitions/dto.CustomerResponse'
       summary: update customers service area
 swagger: "2.0"

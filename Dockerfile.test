@@ -1,0 +1,11 @@
+FROM golang:1.18-alpine
+
+RUN apk add --no-cache git gcc musl-dev
+
+WORKDIR /app
+
+COPY ./ ./
+RUN go mod download
+RUN go get gotest.tools/gotestsum
+RUN go install gotest.tools/gotestsum@latest
+RUN go mod verify
