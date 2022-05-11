@@ -8,7 +8,6 @@ import (
 	"customer-service/pkg/rabbitmq"
 	"encoding/json"
 	"fmt"
-	"golang.org/x/exp/maps"
 )
 
 type rabbitmqHandler struct {
@@ -60,10 +59,10 @@ func (handler *rabbitmqHandler) Listen() {
 		panic(err)
 	}
 
-	for _, s := range maps.Keys(handler.handlers) {
+	for key := range handler.handlers {
 		err = handler.rabbitmq.Channel.QueueBind(
 			q.Name,
-			s,
+			key,
 			handler.config.RabbitMQ.Exchange,
 			false,
 			nil)
