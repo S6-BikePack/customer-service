@@ -10,14 +10,16 @@
 
 
 <!-- Badges -->
-<p>
-
-</p>
+[![golangci-lint](https://github.com/S6-BikePack/customer-service/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/S6-BikePack/customer-service/actions/workflows/golangci-lint.yml)
+[![Makefile CI](https://github.com/S6-BikePack/customer-service/actions/workflows/run-tests.yml/badge.svg)](https://github.com/S6-BikePack/customer-service/actions/workflows/run-tests.yml)
+[![Build](https://github.com/S6-BikePack/customer-service/actions/workflows/build.yml/badge.svg)](https://github.com/S6-BikePack/customer-service/actions/workflows/build.yml)
 
 <h4>
     <a href="https://github.com/S6-BikePack">Home</a>
   <span> · </span>
     <a href="https://github.com/S6-BikePack/customer-service#-about-the-project">Documentation</a>
+  <span> · </span>
+    <a href="https://github.com/S6-BikePack/infrastructure#-about-the-project">Infrastructure</a>
   </h4>
 </div>
 
@@ -59,13 +61,36 @@ The Customer-Service is the service for the BikePack project that handles all cu
   </ul>
 
 <!-- Env Variables -->
-### 🔑 Environment Variables
+### 🔑 Configuration
 
-This service has the following environment variables that can be set:
+This service can be configured using environment variables or a json file. The location of the file can be passed to the `config` environment variable.
 
-`PORT` - Port the service runs on
-`DATABASE` - Databae connection url
-`RABBITMQ` - RabbitMQ connection url
+The following configuration is available:
+
+```json
+{
+    "server": {
+      "service": "string",
+      "port": "string",
+      "description": "string"
+    },
+    "rabbitMQ": {
+      "host": "string",
+      "port": "int",
+      "user": "string",
+      "password": "string",
+      "exchange": "string"
+    },
+    "database": {
+      "host": "string",
+      "port": "int",
+      "user": "string",
+      "password": "string",
+      "database": "string",
+      "debug": "bool"
+    }
+}
+```
 
 <!-- Getting Started -->
 ## 	🛠️ Getting Started
@@ -80,7 +105,7 @@ The easiest way to setup the project is to use the Docker-Compose file from the 
 <!-- Running Tests -->
 ### 🧪 Running Tests
 
--
+The tests in the project can easily be run using make and the `make run-tests` command. This will start the required docker containers and run all tests in the project.
 
 <!-- Run Locally -->
 ### 🏃 Run Locally
