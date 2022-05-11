@@ -7,3 +7,5 @@ linters:
     - staticcheck
     - structcheck
     - unused
+  skip-files:
+    - internal/handlers/rabbitmq.go
