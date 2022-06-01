@@ -51,12 +51,12 @@ spec:
         - name: DATABASE_USER
           valueFrom:
             secretKeyRef:
-              name: bikepack-secret
+              name: user-secret
               key: dbUser
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: bikepack-secret
+              name: user-secret
               key: dbPass
         - name: DATABASE_DATABASE
           value: customer
