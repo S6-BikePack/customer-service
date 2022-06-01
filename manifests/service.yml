@@ -1,15 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: "bikepackk8s-1b06"
-    labels:
-        app: "bikepackk8s-1b06"
+  name: customer-service
 spec:
-    type: LoadBalancer
-    ports:
-    - port: 1234
-      targetPort: 1234
-      protocol: TCP
-      name: http
-    selector:
-        app: "bikepackk8s-1b06"
+  selector:
+    app: customer-service
+  ports:
+    - protocol: TCP
+      port: 1234
