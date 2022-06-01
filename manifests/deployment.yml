@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "bikepackk8s-1b06"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "bikepackk8s-1b06"
+  template:
+    metadata:
+      labels:
+        app: "bikepackk8s-1b06"
+    spec:
+      containers:
+        - name: "bikepackk8s-1b06"
+          image: "bikepack.azurecr.io/bikepackk8s"
+          ports:
+          - containerPort: 1234
