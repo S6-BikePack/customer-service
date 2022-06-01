@@ -2,8 +2,8 @@ package logging
 
 import (
 	"context"
+	"customer-service/config"
 	"fmt"
-	"user-service/config"
 )
 
 type SimpleLogger struct {
