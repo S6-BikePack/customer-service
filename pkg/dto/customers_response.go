@@ -21,8 +21,8 @@ type CustomerListResponse []*customerResponse
 func CreateCustomerListResponse(customers []domain.Customer) CustomerListResponse {
 	response := CustomerListResponse{}
 	for _, s := range customers {
-		serviceArea := createCustomersResponse(s)
-		response = append(response, &serviceArea)
+		customer := createCustomersResponse(s)
+		response = append(response, &customer)
 	}
 	return response
 }

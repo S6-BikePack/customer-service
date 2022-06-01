@@ -6,8 +6,8 @@ import (
 	"customer-service/internal/core/services"
 	"customer-service/internal/handlers"
 	"customer-service/internal/repositories"
-	"customer-service/pkg/azure"
 	"customer-service/pkg/logging"
+	"customer-service/pkg/rabbitmq"
 	"customer-service/pkg/tracing"
 	"fmt"
 	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
@@ -50,8 +50,8 @@ func main() {
 	//--------------------------------------------------------------------------------------
 
 	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=%s",
-		cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Database, cfg.Database.SSLMode)
+		"password=%s dbname=%s sslmode=disable",
+		cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Database)
 	db, err := gorm.Open(postgres.Open(dsn))
 
 	if err != nil {
@@ -77,22 +77,22 @@ func main() {
 	}
 
 	//--------------------------------------------------------------------------------------
-	// Setup Azure Service Bus
+	// Setup RabbitMQ
 	//--------------------------------------------------------------------------------------
 
-	azServiceBus, err := azure.NewAzureServiceBus(cfg)
+	rmqServer, err := rabbitmq.NewRabbitMQ(cfg)
 
 	if err != nil {
 		logger.Fatal(context.Background(), err)
 	}
 
-	azPublisher := services.NewAzurePublisher(azServiceBus, cfg)
+	rmqPublisher := services.NewRabbitMQPublisher(rmqServer, tracer, cfg)
 
 	//--------------------------------------------------------------------------------------
 	// Setup Services
 	//--------------------------------------------------------------------------------------
 
-	customerService := services.NewCustomerService(customerRepository, azPublisher)
+	customerService := services.NewCustomerService(customerRepository, rmqPublisher)
 
 	//--------------------------------------------------------------------------------------
 	// Setup HTTP server
@@ -104,11 +104,10 @@ func main() {
 	deliveryHandler := handlers.NewRest(customerService, router, logger, cfg)
 	deliveryHandler.SetupEndpoints()
 	deliveryHandler.SetupSwagger()
-	deliveryHandler.SetupHealthprobe()
 
-	azSubscriber := handlers.NewAzure(azServiceBus, customerService, cfg)
+	rmqSubscriber := handlers.NewRabbitMQ(rmqServer, customerService, cfg)
 
-	go azSubscriber.Listen()
+	go rmqSubscriber.Listen()
 	logger.Fatal(context.Background(), router.Run(cfg.Server.Port))
 }
 

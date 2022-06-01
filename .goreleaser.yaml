@@ -1,8 +1,10 @@
 project_name: customer-service
+
 before:
   hooks:
     - go mod tidy
     - go generate ./...
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -14,18 +16,22 @@ builds:
       - amd64
       - arm64
     main: ./cmd/rest
+
 archives:
   - replacements:
       darwin: Darwin
       linux: Linux
       windows: Windows
       amd64: x86_64
+
 checksum:
   name_template: 'checksums.txt'
+
 dockers:
   - image_templates:
       - "ghcr.io/s6-bikepack/customer-service:{{ .Version }}"
       - "ghcr.io/s6-bikepack/customer-service:latest"
+      - "bikepack.azurecr.io/bikepack/customer-service:latest"
     dockerfile: Dockerfile.release
     build_flag_templates:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -38,3 +44,7 @@ dockers:
       - --label=org.opencontainers.image.licenses=MIT
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  use: github
+  sort: asc

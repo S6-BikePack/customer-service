@@ -5,7 +5,6 @@ import (
 	"customer-service/config"
 	"customer-service/internal/core/domain"
 	"customer-service/internal/core/interfaces"
-	"customer-service/internal/mock"
 	"customer-service/pkg/rabbitmq"
 	"encoding/json"
 	"github.com/pkg/errors"
@@ -16,7 +15,6 @@ import (
 
 type RabbitMQPublisherTestSuite struct {
 	suite.Suite
-	MockService   *mock.CustomerService
 	TestRabbitMQ  *rabbitmq.RabbitMQ
 	TestPublisher interfaces.MessageBusPublisher
 	Cfg           *config.Config
@@ -34,8 +32,6 @@ func (suite *RabbitMQPublisherTestSuite) SetupSuite() {
 		panic(errors.WithStack(err))
 	}
 
-	mockService := new(mock.CustomerService)
-
 	rmqServer, err := rabbitmq.NewRabbitMQ(cfg)
 
 	if err != nil {
@@ -47,7 +43,6 @@ func (suite *RabbitMQPublisherTestSuite) SetupSuite() {
 	rmqPublisher := NewRabbitMQPublisher(rmqServer, tracer, cfg)
 
 	suite.Cfg = cfg
-	suite.MockService = mockService
 	suite.TestRabbitMQ = rmqServer
 	suite.TestPublisher = rmqPublisher
 	suite.TestData = struct {
@@ -209,6 +204,6 @@ func (suite *RabbitMQPublisherTestSuite) TestRabbitMQPublisher_UpdateServiceArea
 }
 
 func TestIntegration_RabbitMQPublisherTestSuite(t *testing.T) {
-	repoSuite := new(RabbitMQPublisherTestSuite)
-	suite.Run(t, repoSuite)
+	testSuite := new(RabbitMQPublisherTestSuite)
+	suite.Run(t, testSuite)
 }

@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: customer-ingress
+spec:
+  routes:
+    - match: PathPrefix(`/api/customers`)
+      kind: Rule
+      services:
+        - name: customer-service
+          port: 1234
+      middlewares:
+        - name: allow-headers
+        - name: forward-auth
