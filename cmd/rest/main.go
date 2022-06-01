@@ -104,6 +104,7 @@ func main() {
 	deliveryHandler := handlers.NewRest(customerService, router, logger, cfg)
 	deliveryHandler.SetupEndpoints()
 	deliveryHandler.SetupSwagger()
+	deliveryHandler.SetupHealthprobe()
 
 	azSubscriber := handlers.NewAzure(azServiceBus, customerService, cfg)
 
